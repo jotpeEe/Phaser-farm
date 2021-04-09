@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 
+import { debugDraw } from '../utils/debug';
 export default class Game extends Phaser.Scene {
   
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -20,31 +21,23 @@ export default class Game extends Phaser.Scene {
     const bottomLayer = map.createLayer('bottom', tileset)
     const midLayer = map.createLayer('mid', tileset)
     const topLayer = map.createLayer('top', tileset)
-
-    const debugGraphics = this.add.graphics().setAlpha(0.7)
+    const midCharLayer = map.createLayer('mid-for-char', tileset)
+    midLayer.setDepth(10);
+    topLayer.setDepth(10);
     
-    bottomLayer.setCollisionByProperty({ collides: true})
-    bottomLayer.renderDebug(debugGraphics, {
-      tileColor: null,
-      collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255),
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-    })
-    midLayer.setCollisionByProperty({ collides: true})
-    midLayer.renderDebug(debugGraphics, {
-      tileColor: null,
-      collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255),
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-    })
-    topLayer.setCollisionByProperty({ collides: true})
-    topLayer.renderDebug(debugGraphics, {
-      tileColor: null,
-      collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255),
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-    })
+    midCharLayer.setCollisionByProperty({ collides: true })
+    bottomLayer.setCollisionByProperty({ collides: true })
+    midLayer.setCollisionByProperty({ collides: true })
+    topLayer.setCollisionByProperty({ collides: true })
+
+    // debugDraw(bottomLayer, this)
+    // debugDraw(midLayer, this)
+    // debugDraw(topLayer, this)
+    // debugDraw(midCharLayer, this)
 
     this.char = this.physics.add.sprite(500, 500, 'char', 'walk-down-1.png')
-    this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.8)
-    this.char.body.offset.y = 6
+    this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.4)
+    this.char.body.offset.y = 18
     this.char.scale = 1.3
 
     this.anims.create({
@@ -100,6 +93,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.char, bottomLayer)
     this.physics.add.collider(this.char, topLayer)
     this.physics.add.collider(this.char, midLayer)
+    this.physics.add.collider(this.char, midCharLayer)
 
     this.cameras.main.startFollow(this.char, true)
   }
