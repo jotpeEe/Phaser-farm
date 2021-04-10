@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 
+import { createCharacterAnimations } from '../anims/CharacterAnims'
 export default class Market extends Phaser.Scene {
   
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -14,6 +15,8 @@ export default class Market extends Phaser.Scene {
   }
 
   create() {
+    createCharacterAnimations(this.anims)
+
     const map = this.make.tilemap({ key: 'market' })
     const tileset = map.addTilesetImage('market', 'tiles')
 
@@ -21,7 +24,7 @@ export default class Market extends Phaser.Scene {
     const midLayer = map.createLayer('mid', tileset)
     const topLayer = map.createLayer('top', tileset)
     const midCharLayer = map.createLayer('mid-for-char', tileset)
-    
+  
     midLayer.setDepth(10);
     topLayer.setDepth(10);
 
@@ -34,54 +37,6 @@ export default class Market extends Phaser.Scene {
     this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.4)
     this.char.body.offset.y = 18
     this.char.scale = 1.3
-
-    this.anims.create({
-      key: 'char-idle-down',
-      frames: [{ key: 'char', frame: 'walk-down-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-idle-up',
-      frames: [{ key: 'char', frame: 'walk-top-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-idle-left',
-      frames: [{ key: 'char', frame: 'walk-left-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-idle-right',
-      frames: [{ key: 'char', frame: 'walk-right-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-run-down',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-down-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
-    
-    this.anims.create({
-      key: 'char-run-up',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-top-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
-
-    this.anims.create({
-      key: 'char-run-left',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-left-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
-
-    this.anims.create({
-      key: 'char-run-right',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-right-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
 
     this.char.anims.play('char-idle-down')
 
@@ -99,28 +54,24 @@ export default class Market extends Phaser.Scene {
     }
 
     const speed = 150;
+    let charVelocity = new Phaser.Math.Vector2();
 
     if (this.cursors.left?.isDown) {
 
-      this.char.play('char-run-left', true)
-      this.char.setVelocity(-speed, 0)
-
+      charVelocity.x -= 1;
 
     } else if (this.cursors.right?.isDown) {
 
-      this.char.play('char-run-right', true)
-      this.char.setVelocity(speed, 0)
-
-
-    } else if (this.cursors.up?.isDown) {
+      charVelocity.x += 1;
+    } 
+    
+    if (this.cursors.up?.isDown) {
       
-      this.char.play('char-run-up', true)
-      this.char.setVelocity(0, -speed)
+      charVelocity.y -= 1;
       
     } else if (this.cursors.down?.isDown) {
       
-      this.char.play('char-run-down', true)
-      this.char.setVelocity(0, speed)
+      charVelocity.y += 1;
 
     } else {
 
@@ -130,5 +81,9 @@ export default class Market extends Phaser.Scene {
       this.char.setVelocity(0, 0)
 
     }
+
+    charVelocity.normalize();
+    charVelocity.scale(speed);
+    this.char.setVelocity(charVelocity.x, charVelocity.y);
   }
 }

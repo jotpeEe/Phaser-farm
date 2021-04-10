@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 
 import { debugDraw } from '../utils/debug';
+import { createCharacterAnimations } from '../anims/CharacterAnims';
 export default class Game extends Phaser.Scene {
   
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -15,6 +16,9 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+
+    createCharacterAnimations(this.anims)
+
     const map = this.make.tilemap({ key: 'farm' })
     const tileset = map.addTilesetImage('farm', 'tiles')
     
@@ -39,54 +43,6 @@ export default class Game extends Phaser.Scene {
     this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.4)
     this.char.body.offset.y = 18
     this.char.scale = 1.3
-
-    this.anims.create({
-      key: 'char-idle-down',
-      frames: [{ key: 'char', frame: 'walk-down-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-idle-up',
-      frames: [{ key: 'char', frame: 'walk-top-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-idle-left',
-      frames: [{ key: 'char', frame: 'walk-left-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-idle-right',
-      frames: [{ key: 'char', frame: 'walk-right-1.png' }]
-    })
-
-    this.anims.create({
-      key: 'char-run-down',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-down-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
-    
-    this.anims.create({
-      key: 'char-run-up',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-top-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
-
-    this.anims.create({
-      key: 'char-run-left',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-left-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
-
-    this.anims.create({
-      key: 'char-run-right',
-      frames: this.anims.generateFrameNames('char', { start: 1, end: 9, prefix: 'walk-right-', suffix: '.png' }),
-      repeat: -1,
-      frameRate: 15
-    })
 
     this.char.anims.play('char-idle-down')
 
