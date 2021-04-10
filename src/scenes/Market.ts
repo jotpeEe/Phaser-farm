@@ -1,41 +1,36 @@
 import Phaser from 'phaser'
 
-import { debugDraw } from '../utils/debug';
-export default class Game extends Phaser.Scene {
+export default class Market extends Phaser.Scene {
   
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private char!: Phaser.Physics.Arcade.Sprite
+  
+  constructor() {
+    super('market')
+  }
 
-	constructor() {
-		super('game')
-	}
-
-	preload() {
-      this.cursors = this.input.keyboard.createCursorKeys()
+  preload() {
+    this.cursors = this.input.keyboard.createCursorKeys()
   }
 
   create() {
-    const map = this.make.tilemap({ key: 'farm' })
-    const tileset = map.addTilesetImage('farm', 'tiles')
-    
+    const map = this.make.tilemap({ key: 'market' })
+    const tileset = map.addTilesetImage('market', 'tiles')
+
     const bottomLayer = map.createLayer('bottom', tileset)
     const midLayer = map.createLayer('mid', tileset)
     const topLayer = map.createLayer('top', tileset)
     const midCharLayer = map.createLayer('mid-for-char', tileset)
+    
     midLayer.setDepth(10);
     topLayer.setDepth(10);
-    
+
     midCharLayer.setCollisionByProperty({ collides: true })
     bottomLayer.setCollisionByProperty({ collides: true })
     midLayer.setCollisionByProperty({ collides: true })
     topLayer.setCollisionByProperty({ collides: true })
-
-    // debugDraw(bottomLayer, this)
-    // debugDraw(midLayer, this)
-    // debugDraw(topLayer, this)
-    // debugDraw(midCharLayer, this)
-
-    this.char = this.physics.add.sprite(500, 500, 'char', 'walk-down-1.png')
+    
+    this.char = this.physics.add.sprite(780, 150, 'char', 'walk-down-1.png')
     this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.4)
     this.char.body.offset.y = 18
     this.char.scale = 1.3
@@ -97,7 +92,7 @@ export default class Game extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.char, true)
   }
-
+  
   update(t: number, dt: number) {
     if (!this.cursors || !this.char) {
       return
@@ -135,8 +130,5 @@ export default class Game extends Phaser.Scene {
       this.char.setVelocity(0, 0)
 
     }
-    setTimeout(() => {
-      this.scene.start('market')
-    }, 5000)
   }
 }

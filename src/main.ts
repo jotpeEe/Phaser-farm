@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 
 import Preloader from './scenes/Preloader'
 import Game from './scenes/Game'
+import Market from './scenes/Market'
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
 			gravity: { y: 0 }
 		}
 	},
-	scene: [Preloader, Game],
+	scene: [Preloader, Game, Market],
 }
 
 export default new Phaser.Game(config)
