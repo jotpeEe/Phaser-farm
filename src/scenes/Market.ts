@@ -32,13 +32,11 @@ export default class Market extends Phaser.Scene {
     bottomLayer.setCollisionByProperty({ collides: true })
     midLayer.setCollisionByProperty({ collides: true })
     topLayer.setCollisionByProperty({ collides: true })
-    
+
     this.char = this.physics.add.sprite(780, 150, 'char', 'walk-down-1.png')
     this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.4)
     this.char.body.offset.y = 18
     this.char.scale = 1.3
-
-    this.char.anims.play('char-idle-down')
 
     this.physics.add.collider(this.char, bottomLayer)
     this.physics.add.collider(this.char, topLayer)
@@ -49,41 +47,5 @@ export default class Market extends Phaser.Scene {
   }
   
   update(t: number, dt: number) {
-    if (!this.cursors || !this.char) {
-      return
-    }
-
-    const speed = 150;
-    let charVelocity = new Phaser.Math.Vector2();
-
-    if (this.cursors.left?.isDown) {
-
-      charVelocity.x -= 1;
-
-    } else if (this.cursors.right?.isDown) {
-
-      charVelocity.x += 1;
-    } 
     
-    if (this.cursors.up?.isDown) {
-      
-      charVelocity.y -= 1;
-      
-    } else if (this.cursors.down?.isDown) {
-      
-      charVelocity.y += 1;
-
-    } else {
-
-      const parts = this.char.anims.currentAnim.key.split('-')
-      parts[1] = 'idle'
-      this.char.play(parts.join('-'))
-      this.char.setVelocity(0, 0)
-
-    }
-
-    charVelocity.normalize();
-    charVelocity.scale(speed);
-    this.char.setVelocity(charVelocity.x, charVelocity.y);
-  }
 }
