@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "atlas.png",
+			"image": "farmer.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 134,

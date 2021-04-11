@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 import { debugDraw } from '../utils/debug';
-import { createCharacterAnimations } from '../anims/CharacterAnims';
+import { createFarmerAnimation } from '../anims/Farmer';
 import '../character/farmer'
 export default class Game extends Phaser.Scene {
   
@@ -19,7 +19,7 @@ export default class Game extends Phaser.Scene {
 
   create() {
 
-    createCharacterAnimations(this.anims)
+    createFarmerAnimation(this.anims)
 
     const map = this.make.tilemap({ key: 'farm' })
     const tileset = map.addTilesetImage('farm', 'tiles')
@@ -56,6 +56,7 @@ export default class Game extends Phaser.Scene {
   }
 
   update(t: number, dt: number) {
+    
     if (this.farmer) {
       this.farmer.update(this.cursors)
     }

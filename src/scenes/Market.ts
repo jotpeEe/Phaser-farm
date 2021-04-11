@@ -1,10 +1,11 @@
 import Phaser from 'phaser'
 
-import { createCharacterAnimations } from '../anims/CharacterAnims'
+import { createFarmerAnimation } from '../anims/Farmer'
+import '../character/farmer';
 export default class Market extends Phaser.Scene {
   
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private char!: Phaser.Physics.Arcade.Sprite
+  private farmer!: Phaser.Physics.Arcade.Sprite
   
   constructor() {
     super('market')
@@ -15,7 +16,7 @@ export default class Market extends Phaser.Scene {
   }
 
   create() {
-    createCharacterAnimations(this.anims)
+    createFarmerAnimation(this.anims)
 
     const map = this.make.tilemap({ key: 'market' })
     const tileset = map.addTilesetImage('market', 'tiles')
@@ -28,24 +29,24 @@ export default class Market extends Phaser.Scene {
     midLayer.setDepth(10);
     topLayer.setDepth(10);
 
+    this.farmer = this.add.farmer(780, 150, 'farmer')
+
     midCharLayer.setCollisionByProperty({ collides: true })
     bottomLayer.setCollisionByProperty({ collides: true })
     midLayer.setCollisionByProperty({ collides: true })
     topLayer.setCollisionByProperty({ collides: true })
 
-    this.char = this.physics.add.sprite(780, 150, 'char', 'walk-down-1.png')
-    this.char.body.setSize(this.char.width * 0.4, this.char.height * 0.4)
-    this.char.body.offset.y = 18
-    this.char.scale = 1.3
+    this.physics.add.collider(this.farmer, bottomLayer)
+    this.physics.add.collider(this.farmer, topLayer)
+    this.physics.add.collider(this.farmer, midLayer)
+    this.physics.add.collider(this.farmer, midCharLayer)
 
-    this.physics.add.collider(this.char, bottomLayer)
-    this.physics.add.collider(this.char, topLayer)
-    this.physics.add.collider(this.char, midLayer)
-    this.physics.add.collider(this.char, midCharLayer)
-
-    this.cameras.main.startFollow(this.char, true)
+    this.cameras.main.startFollow(this.farmer, true)
   }
   
   update(t: number, dt: number) {
-    
+    if (this.farmer) {
+      this.farmer.update(this.cursors)
+    }
+  }
 }

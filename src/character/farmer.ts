@@ -71,8 +71,8 @@ Phaser.GameObjects.GameObjectFactory.register('farmer', function(this: Phaser.Ga
   this.updateList.add(sprite)
 
   this.scene.physics.world.enableBody(sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
-  sprite.body.setSize(sprite.width * 0.4, sprite.height * 0.4)
-  sprite.body.offset.y = 18
+  sprite.body.setSize(sprite.width * 0.3, sprite.height * 0.2)
+  sprite.body.offset.y = 24
   sprite.scale = 1.3
 
   return sprite;

@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-const createCharacterAnimations = (anims: Phaser.Animations.AnimationManager) => {
+const createFarmerAnimation = (anims: Phaser.Animations.AnimationManager) => {
     
   anims.create({
     key: 'farmer-idle-down',
@@ -52,5 +52,5 @@ const createCharacterAnimations = (anims: Phaser.Animations.AnimationManager) =>
 }
 
 export {
-  createCharacterAnimations
+  createFarmerAnimation
 }
