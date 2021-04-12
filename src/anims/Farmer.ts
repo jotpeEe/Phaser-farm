@@ -9,7 +9,7 @@ const createFarmerAnimation = (anims: Phaser.Animations.AnimationManager) => {
 
   anims.create({
     key: 'farmer-idle-up',
-    frames: [{ key: 'farmer', frame: 'walk-top-1.png' }]
+    frames: [{ key: 'farmer', frame: 'walk-up-1.png' }]
   })
 
   anims.create({
@@ -31,7 +31,7 @@ const createFarmerAnimation = (anims: Phaser.Animations.AnimationManager) => {
   
   anims.create({
     key: 'farmer-run-up',
-    frames: anims.generateFrameNames('farmer', { start: 1, end: 9, prefix: 'walk-top-', suffix: '.png' }),
+    frames: anims.generateFrameNames('farmer', { start: 1, end: 9, prefix: 'walk-up-', suffix: '.png' }),
     repeat: -1,
     frameRate: 15
   })

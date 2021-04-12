@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 
 import { debugDraw } from '../utils/debug';
 import { createFarmerAnimation } from '../anims/Farmer';
+import { createGirlAnimation } from '../anims/girl';
 import '../character/farmer'
 export default class Game extends Phaser.Scene {
   
