@@ -7,6 +7,9 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     this.load.image('tiles', 'tiles/farm.png')
+    this.load.image('bubble', 'resources/bubble.png')
+    this.load.image('ground', 'tiles/ground.png')
+
     this.load.tilemapTiledJSON('farm', 'tiles/farm.json')
     this.load.tilemapTiledJSON('market', 'tiles/market.json')
 
@@ -15,6 +18,6 @@ export default class Preloader extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start('market')
+    this.scene.start('game')
   }
 }
