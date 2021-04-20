@@ -41,37 +41,42 @@ export default class Girl extends Phaser.Physics.Arcade.Sprite {
     this.direction = randomDirection(this.direction)
   }
 
+  private moveLeft = (charVelocity: Phaser.Math.Vector2) => {
+    this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
+    charVelocity.x -= 1
+  }
+
+  private moveRight = (charVelocity: Phaser.Math.Vector2) => {
+    this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
+    charVelocity.x += 1
+  }
+
+  private moveDown = (charVelocity: Phaser.Math.Vector2) => {
+    this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
+    charVelocity.y += 1
+  }
+
+  private moveUp = (charVelocity: Phaser.Math.Vector2) => {
+    this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
+    charVelocity.y -= 1
+  }
+
   preUpdate(t: number, dt: number) {
     super.preUpdate(t, dt)
 
     const speed = 50;
-    let charVelocity = new Phaser.Math.Vector2();
+    let girlVelocity = new Phaser.Math.Vector2()
     
-    if (this.direction === 2) {
-      
-      this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-      charVelocity.x -= 1;
-
-    } else if (this.direction === 3) {
-      
-      this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-      charVelocity.x += 1;
-
-    } else if (this.direction === 0) {
-      
-      this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-      charVelocity.y -= 1;
-      
-    } else if (this.direction === 1) {
-      
-      this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-      charVelocity.y += 1;
-
-    } 
+    const move = {
+      0: () => this.moveUp(girlVelocity),
+      1: () => this.moveDown(girlVelocity),
+      2: () => this.moveLeft(girlVelocity),
+      3: () => this.moveRight(girlVelocity),
+    }[this.direction];
+    move?.();
     
-    charVelocity.scale(speed);
-    this.setVelocity(charVelocity.x, charVelocity.y);
-
+    girlVelocity.scale(speed);
+    this.setVelocity(girlVelocity.x, girlVelocity.y);
 
   }
 }
