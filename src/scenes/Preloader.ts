@@ -15,6 +15,8 @@ export default class Preloader extends Phaser.Scene {
 
     this.load.atlas('farmer', 'character/farmer.png', 'character/farmer.json')
     this.load.atlas('girl', 'character/girl.png', 'character/girl.json')
+    this.load.atlas('girl2', 'character/girl2.png', 'character/girl2.json')
+    this.load.atlas('girl3', 'character/girl3.png', 'character/girl3.json')
   }
 
   create() {

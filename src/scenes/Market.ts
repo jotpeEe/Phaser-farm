@@ -1,9 +1,9 @@
 import Phaser from 'phaser'
 
-import { createFarmerAnimation } from '../anims/Farmer'
-import { createGirlAnimation } from '../anims/girl'
+import { createAnimation } from '../utils/createAnimation'
 import '../character/farmer'
 import Girl from '../character/girl'
+
 export default class Market extends Phaser.Scene {
   /** @types {Phaser.Types.Input.Keyboard.CursorKeys} */ 
   private cursors
@@ -31,6 +31,7 @@ export default class Market extends Phaser.Scene {
     }
 
     this.activeTile = body;
+
     this.activeTile.setTint(0x00FFFF)
   }
 
@@ -52,8 +53,10 @@ export default class Market extends Phaser.Scene {
   }
 
   create() {
-    createFarmerAnimation(this.anims)
-    createGirlAnimation(this.anims)
+    createAnimation(this.anims, 'farmer', 15)
+    createAnimation(this.anims, 'girl', 5)
+    createAnimation(this.anims, 'girl2', 5)
+    createAnimation(this.anims, 'girl3', 5)
 
     const map = this.make.tilemap({ key: 'market' })
     const tileset = map.addTilesetImage('market', 'tiles')
@@ -68,7 +71,7 @@ export default class Market extends Phaser.Scene {
     midLayer.setDepth(10);
     topLayer.setDepth(10);
 
-    this.farmer = this.add.farmer(780, 150, 'farmer')
+    this.farmer = this.add.farmer(780, 32, 'farmer')
     
     const town_people = this.physics.add.group({
       classType: Girl,
@@ -79,11 +82,11 @@ export default class Market extends Phaser.Scene {
     })
 
     town_people.get(780, 350, 'girl')
-    town_people.get(850, 850, 'girl')
-    town_people.get(550, 650, 'girl')
-    town_people.get(250, 450, 'girl')
+    town_people.get(850, 850, 'girl2')
+    town_people.get(550, 650, 'girl3')
+    town_people.get(250, 450, 'girl3')
     town_people.get(250, 850, 'girl')
-    town_people.get(450, 250, 'girl')
+    town_people.get(450, 250, 'girl2')
 
     portals.setCollisionByProperty({ collides: true })
     midCharLayer.setCollisionByProperty({ collides: true })

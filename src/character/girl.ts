@@ -41,24 +41,24 @@ export default class Girl extends Phaser.Physics.Arcade.Sprite {
     this.direction = randomDirection(this.direction)
   }
 
-  private moveLeft = (charVelocity: Phaser.Math.Vector2) => {
+  private moveLeft = (shiftVector: Phaser.Math.Vector2) => {
     this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-    charVelocity.x -= 1
+    shiftVector.x -= 1
   }
 
-  private moveRight = (charVelocity: Phaser.Math.Vector2) => {
+  private moveRight = (shiftVector: Phaser.Math.Vector2) => {
     this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-    charVelocity.x += 1
+    shiftVector.x += 1
   }
 
-  private moveDown = (charVelocity: Phaser.Math.Vector2) => {
+  private moveDown = (shiftVector: Phaser.Math.Vector2) => {
     this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-    charVelocity.y += 1
+    shiftVector.y += 1
   }
 
-  private moveUp = (charVelocity: Phaser.Math.Vector2) => {
+  private moveUp = (shiftVector: Phaser.Math.Vector2) => {
     this.play(`${this.texture.key}-run-${Direction[this.direction]}`, true)
-    charVelocity.y -= 1
+    shiftVector.y -= 1
   }
 
   preUpdate(t: number, dt: number) {

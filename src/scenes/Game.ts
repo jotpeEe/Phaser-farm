@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-import { createFarmerAnimation } from '../anims/Farmer';
+import { createAnimation } from '../utils/createAnimation';
 
 import '../character/farmer'
 export default class Game extends Phaser.Scene {
@@ -18,13 +18,8 @@ export default class Game extends Phaser.Scene {
 		super('game')
 	}
 
-	preload() {
-      this.cursors = this.input.keyboard.createCursorKeys()
-  }
-
   private handlePortals = () => {
     this.scene.start('market')
-    this.scene.stop();
   }
   
   private handleOverlap = (player, body) => {
@@ -32,6 +27,7 @@ export default class Game extends Phaser.Scene {
       return
     }
     this.activeFarm = body
+
     this.activeFarm.setTint(0xD8D8D8)
   }
 
@@ -51,10 +47,28 @@ export default class Game extends Phaser.Scene {
     this.activeFarm.clearTint();
     this.activeFarm = undefined
   }
+  
+  private createBoxes(x: number, y: number, rowes: number, columns: number) {
+    const tempX = x;
+    for(let row = 0; row < rowes; ++row) {
+      for(let col = 0; col < columns; ++col) {
+        this.boxGroup.get(x, y, 'ground')
+        if (col === columns - 1) {
+          x = tempX          
+        } else {
+          x += 32
+        }
+      }
+      y += 32;
+    }
+  }
+  
+  preload() {
+      this.cursors = this.input.keyboard.createCursorKeys()
+  }
 
   create() {
-    /** Loading all possible animations for character, we will use (farmer) */
-    createFarmerAnimation(this.anims)
+    createAnimation(this.anims, 'farmer', 15)
 
     const map = this.make.tilemap({ key: 'farm' })
     const tileset = map.addTilesetImage('farm', 'tiles')
@@ -69,7 +83,10 @@ export default class Game extends Phaser.Scene {
     topLayer.setDepth(10);
 
     this.boxGroup = this.physics.add.staticGroup()
-    this.createBoxes(976, 464, 17, 7);
+    this.createBoxes(976, 464, 17, 7)
+    this.createBoxes(48, 144, 3, 11)
+    this.createBoxes(400, 208, 1, 1)
+    this.createBoxes(368, 464, 8, 12)
     this.farmer = this.add.farmer(780, 1100, 'farmer')
 
     portals.setCollisionByProperty({ collides: true })
@@ -82,21 +99,6 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.farmer, midCharLayer)
 
     this.cameras.main.startFollow(this.farmer, true)
-  }
-
-  createBoxes(x: number, y: number, rowes: number, columns: number) {
-    const tempX = x;
-    for(let row = 0; row < rowes; ++row) {
-      for(let col = 0; col < columns; ++col) {
-        this.boxGroup.get(x, y, 'ground')
-        if (col === columns - 1) {
-          x = tempX          
-        } else {
-          x += 32
-        }
-      }
-      y += 32;
-    }
   }
 
   update(t: number, dt: number) {
