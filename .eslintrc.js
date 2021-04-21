@@ -34,6 +34,8 @@ module.exports = {
       { exceptAfterSingleLine: true },
     ],
     'no-param-reassign': 0,
+    'no-namespace': { allowDeclarations: true },
+    'explicit-function-return-type': 0,
   },
   settings: {
     'import/resolver': {
