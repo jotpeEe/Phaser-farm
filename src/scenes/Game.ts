@@ -1,112 +1,107 @@
-import Phaser from 'phaser'
+import Phaser from 'phaser';
 
-import { createAnimation } from '../utils/createAnimation';
+import createAnimation from '../utils/createAnimation';
 
-import '../character/farmer'
+import '../character/farmer';
+
 export default class Game extends Phaser.Scene {
-  /** @type {Phaser.Types.Input.Keyboard.CursorKeys} */ 
-  private cursors
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  private farmer: Phaser.Physics.Arcade.Sprite
+  private activeFarm: Phaser.Physics.Arcade.Sprite
+  private boxGroup: Phaser.Physics.Arcade.StaticGroup
 
-  /** @type {Phaser.Physics.Arcade.Sprite} */
-  private farmer
-  private activeFarm
-
-  /** @type {Phaser.Physics.Arcade.StaticGroup} */
-  private boxGroup
-
-	constructor() {
-		super('game')
-	}
+  constructor() {
+    super('game');
+  }
 
   private handlePortals = () => {
-    this.scene.start('market')
+    this.scene.start('market');
   }
-  
-  private handleOverlap = (player, body) => {
-    if (this.activeFarm) {
-      return
-    }
-    this.activeFarm = body
 
-    this.activeFarm.setTint(0xD8D8D8)
+  private handleOverlap = (player: Phaser.Physics.Arcade.Sprite, body: any) => {
+    if (this.activeFarm) {
+      return;
+    }
+    this.activeFarm = body;
+
+    this.activeFarm.setTint(0xD8D8D8);
   }
 
    private updateActiveTile = () => {
-    if (!this.activeFarm) {
-      return
-    }
+     if (!this.activeFarm) {
+       return;
+     }
 
-    const distance = Phaser.Math.Distance.Between(
-      this.farmer.x, this.farmer.y, this.activeFarm.x, this.activeFarm.y - 16
-    )
+     const distance = Phaser.Math.Distance.Between(
+       this.farmer.x, this.farmer.y, this.activeFarm.x, this.activeFarm.y - 16,
+     );
 
-    if (distance < 16) {
-      return
-    }
+     if (distance < 16) {
+       return;
+     }
 
-    this.activeFarm.clearTint();
-    this.activeFarm = undefined
-  }
-  
-  private createBoxes(x: number, y: number, rowes: number, columns: number) {
-    const tempX = x;
-    for(let row = 0; row < rowes; ++row) {
-      for(let col = 0; col < columns; ++col) {
-        this.boxGroup.get(x, y, 'ground')
-        if (col === columns - 1) {
-          x = tempX          
-        } else {
-          x += 32
-        }
-      }
-      y += 32;
-    }
-  }
-  
-  preload() {
-      this.cursors = this.input.keyboard.createCursorKeys()
-  }
+     this.activeFarm.clearTint();
+     this.activeFarm = undefined;
+   }
 
-  create() {
-    createAnimation(this.anims, 'farmer', 15)
+   private createBoxes(x: number, y: number, rowes: number, columns: number) {
+     const tempX = x;
+     for (let row = 0; row < rowes; ++row) {
+       for (let col = 0; col < columns; ++col) {
+         this.boxGroup.get(x, y, 'ground');
+         if (col === columns - 1) {
+           x = tempX;
+         } else {
+           x += 32;
+         }
+       }
+       y += 32;
+     }
+   }
 
-    const map = this.make.tilemap({ key: 'farm' })
-    const tileset = map.addTilesetImage('farm', 'tiles')
-    
-    const portals = map.createLayer('portals', tileset)
-    const bottomLayer = map.createLayer('bottom', tileset)
-    const midLayer = map.createLayer('mid', tileset)
-    const topLayer = map.createLayer('top', tileset)
-    const midCharLayer = map.createLayer('mid-for-char', tileset)
+   preload() {
+     this.cursors = this.input.keyboard.createCursorKeys();
+   }
 
-    midLayer.setDepth(10);
-    topLayer.setDepth(10);
+   create() {
+     createAnimation(this.anims, 'farmer', 15);
 
-    this.boxGroup = this.physics.add.staticGroup()
-    this.createBoxes(976, 464, 17, 7)
-    this.createBoxes(48, 144, 3, 11)
-    this.createBoxes(400, 208, 1, 1)
-    this.createBoxes(368, 464, 8, 12)
-    this.farmer = this.add.farmer(780, 1100, 'farmer')
+     const map = this.make.tilemap({ key: 'farm' });
+     const tileset = map.addTilesetImage('farm', 'tiles');
 
-    portals.setCollisionByProperty({ collides: true })
-    midCharLayer.setCollisionByProperty({ collides: true })
-    bottomLayer.setCollisionByProperty({ collides: true })
+     const portals = map.createLayer('portals', tileset);
+     const bottomLayer = map.createLayer('bottom', tileset);
+     const midLayer = map.createLayer('mid', tileset);
+     const topLayer = map.createLayer('top', tileset);
+     const midCharLayer = map.createLayer('mid-for-char', tileset);
 
-    this.physics.add.overlap(this.farmer, this.boxGroup, this.handleOverlap)
-    this.physics.add.collider(this.farmer, portals, this.handlePortals, undefined, this)
-    this.physics.add.collider(this.farmer, bottomLayer)
-    this.physics.add.collider(this.farmer, midCharLayer)
+     midLayer.setDepth(10);
+     topLayer.setDepth(10);
 
-    this.cameras.main.startFollow(this.farmer, true)
-  }
+     this.boxGroup = this.physics.add.staticGroup();
+     this.createBoxes(976, 464, 17, 7);
+     this.createBoxes(48, 144, 3, 11);
+     this.createBoxes(400, 208, 1, 1);
+     this.createBoxes(368, 464, 8, 12);
+     this.farmer = this.add.farmer(780, 1100, 'farmer');
 
-  update(t: number, dt: number) {
-    
-    if (this.farmer) {
-      this.farmer.update(this.cursors)
-    }
+     portals.setCollisionByProperty({ collides: true });
+     midCharLayer.setCollisionByProperty({ collides: true });
+     bottomLayer.setCollisionByProperty({ collides: true });
 
-    this.updateActiveTile()
-  }
+     this.physics.add.overlap(this.farmer, this.boxGroup, this.handleOverlap);
+     this.physics.add.collider(this.farmer, portals, this.handlePortals, undefined, this);
+     this.physics.add.collider(this.farmer, bottomLayer);
+     this.physics.add.collider(this.farmer, midCharLayer);
+
+     this.cameras.main.startFollow(this.farmer, true);
+   }
+
+   update() {
+     if (this.farmer) {
+       this.farmer.update(this.cursors);
+     }
+
+     this.updateActiveTile();
+   }
 }
