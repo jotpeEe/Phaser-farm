@@ -2,8 +2,7 @@ import Phaser from 'phaser';
 
 import tiles from '../assets/tiles/farm.png';
 import bubble from '../assets/resources/bubble.png';
-import ground from '../assets/tiles/ground.png';
-
+import ground from '../assets/resources/ground.png';
 import farmer from '../assets/character/farmer.png';
 import girl from '../assets/character/girl.png';
 import girl2 from '../assets/character/girl2.png';

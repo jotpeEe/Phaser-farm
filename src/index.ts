@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import './style.css';
 
 import Preloader from './scenes/Preloader';
 import Game from './scenes/Game';
@@ -11,7 +12,7 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: false,
       gravity: { y: 0 },
     },
   },
