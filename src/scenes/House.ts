@@ -13,7 +13,6 @@ export default class House extends Phaser.Scene {
   }
 
   private handleDoor = () => {
-    this.registry.set('farmerPosition', new Phaser.Math.Vector2(622, 111));
     this.scene.start('game');
   }
 

@@ -17,7 +17,7 @@ export default class Game extends Phaser.Scene {
   constructor() {
     super('game');
     this.clicked = false;
-    this.growthRate = 5;
+    this.growthRate = 45;
     // eslint-disable-next-line no-unused-expressions
   }
 

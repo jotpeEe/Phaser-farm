@@ -26,6 +26,7 @@ import girl3Data from '../assets/character/girl3.json';
 import farmData from '../assets/tiles/farm.json';
 import marketData from '../assets/tiles/market.json';
 import houseData from '../assets/tiles/house.json';
+import shopData from '../assets/tiles/shop.json';
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -51,6 +52,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.tilemapTiledJSON('farm', farmData);
     this.load.tilemapTiledJSON('market', marketData);
     this.load.tilemapTiledJSON('house', houseData);
+    this.load.tilemapTiledJSON('shop', shopData);
 
     this.load.atlas('farmer', farmer, farmerDate);
     this.load.atlas('girl', girl, girlData);
@@ -59,6 +61,6 @@ export default class Preloader extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start('house');
+    this.scene.start('shop');
   }
 }

@@ -5,6 +5,7 @@ import Preloader from './scenes/Preloader';
 import Game from './scenes/Game';
 import Market from './scenes/Market';
 import House from './scenes/House';
+import Shop from './scenes/Shop';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -13,11 +14,11 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: false,
       gravity: { y: 0 },
     },
   },
-  scene: [Preloader, House, Game, Market],
+  scene: [Preloader, Shop, House, Game, Market],
   scale: {
     autoCenter: Phaser.Scale.Center.CENTER_BOTH,
   },

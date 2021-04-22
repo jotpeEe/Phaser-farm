@@ -8,6 +8,7 @@ export default class Market extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private farmer: Phaser.Physics.Arcade.Sprite
   private activeTile: Phaser.Physics.Arcade.Sprite
+  private shopDoors: Phaser.Physics.Arcade.Sprite
 
   constructor() {
     super('market');
@@ -21,7 +22,10 @@ export default class Market extends Phaser.Scene {
     player: Phaser.Physics.Arcade.Sprite,
     tile: any,
   ) => {
-    if (tile.index < 100) {
+    if (tile === this.shopDoors) {
+      this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, this.farmer.y));
+      this.scene.start('shop');
+    } else {
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, 1100));
       this.scene.start('game');
     }
@@ -36,7 +40,6 @@ export default class Market extends Phaser.Scene {
     }
 
     this.activeTile = body;
-
     this.activeTile.setTint(0x00FFFF);
   }
 
@@ -82,6 +85,9 @@ export default class Market extends Phaser.Scene {
       this.farmer = this.add.farmer(780, 32, 'farmer');
     }
 
+    this.shopDoors = this.physics.add.sprite(560, 144, 'door');
+    this.shopDoors.setDepth(-1);
+
     const townPeople = this.physics.add.group({
       classType: Girl,
       createCallback: (go) => {
@@ -104,6 +110,7 @@ export default class Market extends Phaser.Scene {
     topLayer.setCollisionByProperty({ collides: true });
     boundries.setCollisionByProperty({ collides: true });
 
+    this.physics.add.overlap(this.farmer, this.shopDoors, this.handlePortal);
     this.physics.add.overlap(this.farmer, townPeople, this.handleOverlap);
     this.physics.add.collider(this.farmer, portals, this.handlePortal);
     this.physics.add.collider(this.farmer, bottomLayer);
