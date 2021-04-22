@@ -8,20 +8,27 @@ export default class Game extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private farmer: Phaser.Physics.Arcade.Sprite
   private activeFarm: Phaser.Physics.Arcade.Sprite
-  private boxGroup: Phaser.Physics.Arcade.StaticGroup
+  private plants: Phaser.Physics.Arcade.StaticGroup
+  private houseDoor: Phaser.Physics.Arcade.Sprite
   private clicked: boolean;
   private growthRate: number;
-  private count: number;
+  farmerPosition = Phaser.Math.Vector2;
 
   constructor() {
     super('game');
     this.clicked = false;
-    this.growthRate = 1;
-    this.count = 0;
+    this.growthRate = 5;
+    // eslint-disable-next-line no-unused-expressions
   }
 
-  private handlePortals = () => {
-    this.scene.start('market');
+  private handlePortals = (player: Phaser.Physics.Arcade.Sprite, portal: any) => {
+    if (portal === this.houseDoor) {
+      this.scene.start('house');
+      this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, this.farmer.y));
+    } else {
+      this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, 1100));
+      this.scene.start('market');
+    }
   }
 
   private handleOverlap = (player: Phaser.Physics.Arcade.Sprite, body: any) => {
@@ -54,7 +61,7 @@ export default class Game extends Phaser.Scene {
     const tempX = x;
     for (let row = 0; row < rowes; ++row) {
       for (let col = 0; col < columns; ++col) {
-        this.boxGroup.get(x, y, 'ground');
+        this.plants.get(x, y, 'ground');
         if (col === columns - 1) {
           x = tempX;
         } else {
@@ -65,10 +72,9 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  private upgradeFarms = (staticGroup: Phaser.Physics.Arcade.StaticGroup) => {
-    staticGroup.children.each((e: Phaser.Physics.Arcade.Sprite) => {
+  private plantsLoop = (plants: Phaser.Physics.Arcade.StaticGroup) => {
+    plants.children.each((e: Phaser.Physics.Arcade.Sprite) => {
       if (e.data !== null) {
-        this.count += 1;
         const w = (Date.now() - e.data.get('created')) / 1000;
         if (w < this.growthRate) {
           e.setTexture('plantVerySmall');
@@ -122,21 +128,30 @@ export default class Game extends Phaser.Scene {
     midLayer.setDepth(10);
     topLayer.setDepth(10);
 
-    this.boxGroup = this.physics.add.staticGroup();
+    this.plants = this.physics.add.staticGroup();
+
+    this.houseDoor = this.physics.add.sprite(624, 96, 'door');
+
     this.createBoxes(976, 464, 17, 7);
     this.createBoxes(48, 144, 3, 11);
     this.createBoxes(400, 208, 1, 1);
     this.createBoxes(368, 464, 8, 12);
-    this.farmer = this.add.farmer(780, 1100, 'farmer');
+    if (this.registry.values.farmerPosition !== undefined) {
+      this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, this.registry.values.farmerPosition.y, 'farmer');
+    } else {
+      this.farmer = this.add.farmer(780, 1100, 'farmer');
+    }
 
     portals.setCollisionByProperty({ collides: true });
     midCharLayer.setCollisionByProperty({ collides: true });
     bottomLayer.setCollisionByProperty({ collides: true });
 
-    this.physics.add.overlap(this.farmer, this.boxGroup, this.handleOverlap);
+    this.physics.add.overlap(this.farmer, this.plants, this.handleOverlap);
     this.physics.add.collider(this.farmer, portals, this.handlePortals, undefined, this);
     this.physics.add.collider(this.farmer, bottomLayer);
     this.physics.add.collider(this.farmer, midCharLayer);
+    this.physics.add.overlap(this.farmer, this.houseDoor, this.handlePortals);
+
     this.cameras.main.startFollow(this.farmer, true);
   }
 
@@ -152,8 +167,9 @@ export default class Game extends Phaser.Scene {
         this.clicked = true;
       }
     }
+    this.registry.set('plants', this.plants.children.entries);
 
-    this.upgradeFarms(this.boxGroup);
+    this.plantsLoop(this.plants);
     this.updateActiveTile();
   }
 }

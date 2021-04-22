@@ -22,6 +22,7 @@ export default class Market extends Phaser.Scene {
     tile: any,
   ) => {
     if (tile.index < 100) {
+      this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, 1100));
       this.scene.start('game');
     }
   }
@@ -75,7 +76,11 @@ export default class Market extends Phaser.Scene {
     midLayer.setDepth(10);
     topLayer.setDepth(10);
 
-    this.farmer = this.add.farmer(780, 32, 'farmer');
+    if (this.registry.values.farmerPosition !== undefined) {
+      this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, 32, 'farmer');
+    } else {
+      this.farmer = this.add.farmer(780, 32, 'farmer');
+    }
 
     const townPeople = this.physics.add.group({
       classType: Girl,

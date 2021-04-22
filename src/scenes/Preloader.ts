@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 
 import tiles from '../assets/tiles/farm.png';
+import tilesHouse from '../assets/tiles/house.png';
+import floor from '../assets/tiles/floor.png';
+import door from '../assets/tiles/door.png';
 import bubble from '../assets/resources/bubble.png';
 import ground from '../assets/resources/ground.png';
 import plant1 from '../assets/resources/plant/grassVerySmall.png';
@@ -22,6 +25,7 @@ import girl2Data from '../assets/character/girl2.json';
 import girl3Data from '../assets/character/girl3.json';
 import farmData from '../assets/tiles/farm.json';
 import marketData from '../assets/tiles/market.json';
+import houseData from '../assets/tiles/house.json';
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -30,6 +34,9 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     this.load.image('tiles', tiles);
+    this.load.image('tilesHouse', tilesHouse);
+    this.load.image('floor', floor);
+    this.load.image('door', door);
     this.load.image('bubble', bubble);
     this.load.image('ground', ground);
     this.load.image('plantVerySmall', plant1);
@@ -43,6 +50,7 @@ export default class Preloader extends Phaser.Scene {
 
     this.load.tilemapTiledJSON('farm', farmData);
     this.load.tilemapTiledJSON('market', marketData);
+    this.load.tilemapTiledJSON('house', houseData);
 
     this.load.atlas('farmer', farmer, farmerDate);
     this.load.atlas('girl', girl, girlData);
@@ -51,6 +59,6 @@ export default class Preloader extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start('game');
+    this.scene.start('house');
   }
 }
