@@ -17,16 +17,18 @@ export default class Game extends Phaser.Scene {
   constructor() {
     super('game');
     this.clicked = false;
-    this.growthRate = 45;
+    this.growthRate = 15;
     // eslint-disable-next-line no-unused-expressions
   }
 
   private handlePortals = (player: Phaser.Physics.Arcade.Sprite, portal: any) => {
     if (portal === this.houseDoor) {
-      this.scene.start('house');
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, this.farmer.y));
+      this.scene.start('house');
     } else {
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, 1100));
+      this.registry.set('lastScene', 'game');
+      // this.registry.set('plants', this.plants.children);
       this.scene.start('market');
     }
   }
@@ -73,8 +75,12 @@ export default class Game extends Phaser.Scene {
   }
 
   private plantsLoop = (plants: Phaser.Physics.Arcade.StaticGroup) => {
+    const array: number[] = [];
+    let index = 0;
     plants.children.each((e: Phaser.Physics.Arcade.Sprite) => {
       if (e.data !== null) {
+        array[index] = e.data.values.created;
+        index += 1;
         const w = (Date.now() - e.data.get('created')) / 1000;
         if (w < this.growthRate) {
           e.setTexture('plantVerySmall');
@@ -105,7 +111,22 @@ export default class Game extends Phaser.Scene {
           e.data.destroy();
           e.data = null;
         }
+      } else {
+        array[index] = null;
+        index += 1;
       }
+    });
+    this.registry.set('plants', array);
+  }
+
+  private loadPlantsFromRegistry = (array: number[], plants: Phaser.Physics.Arcade.StaticGroup) => {
+    let index = 0;
+    plants.children.each((e: Phaser.Physics.Arcade.Sprite) => {
+      if (array[index] !== null) {
+        e.data = new Phaser.Data.DataManager(e);
+        e.data.set('created', array[index]);
+      }
+      index += 1;
     });
   }
 
@@ -136,6 +157,12 @@ export default class Game extends Phaser.Scene {
     this.createBoxes(48, 144, 3, 11);
     this.createBoxes(400, 208, 1, 1);
     this.createBoxes(368, 464, 8, 12);
+
+    if (this.registry.values.plants !== undefined) {
+      const array = this.registry.get('plants');
+      this.loadPlantsFromRegistry(array, this.plants);
+    }
+
     if (this.registry.values.farmerPosition !== undefined) {
       this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, this.registry.values.farmerPosition.y, 'farmer');
     } else {
@@ -167,7 +194,6 @@ export default class Game extends Phaser.Scene {
         this.clicked = true;
       }
     }
-    this.registry.set('plants', this.plants.children.entries);
 
     this.plantsLoop(this.plants);
     this.updateActiveTile();

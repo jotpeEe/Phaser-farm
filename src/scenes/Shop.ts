@@ -15,6 +15,7 @@ export default class Shop extends Phaser.Scene {
   }
 
   private handleDoor = () => {
+    this.registry.set('lastScene', 'shop');
     this.scene.start('market');
   }
 
@@ -28,7 +29,6 @@ export default class Shop extends Phaser.Scene {
 
     this.activeTouch = shopper;
     this.activeTouch.setTint(0x00FFFF);
-    //  this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, this.farmer.y));
   }
 
   private updateActiveTile = () => {
@@ -60,18 +60,21 @@ export default class Shop extends Phaser.Scene {
     const map = this.make.tilemap({ key: 'shop' });
     const tileset = map.addTilesetImage('house', 'tilesHouse');
 
-    const bottomLayer = map.createLayer('bottom', tileset);
-    const midLayer = map.createLayer('mid', tileset);
-    const midCharLayer = map.createLayer('mid-for-char', tileset);
-    const waypoints = map.createLayer('waypoints', tileset);
+    const bottomLayer = map.createLayer('bottom', tileset)
+      .setCollisionByProperty({ collides: true });
+
+    const midLayer = map.createLayer('mid', tileset)
+      .setDepth(10)
+      .setCollisionByProperty({ collides: true });
+
+    const midCharLayer = map.createLayer('mid-for-char', tileset)
+      .setCollisionByProperty({ collides: true });
+
+    const waypoints = map.createLayer('waypoints', tileset)
+      .setCollisionByProperty({ collides: true });
+
     map.createLayer('top', tileset);
 
-    midCharLayer.setCollisionByProperty({ collides: true });
-    midLayer.setCollisionByProperty({ collides: true });
-    bottomLayer.setCollisionByProperty({ collides: true });
-    waypoints.setCollisionByProperty({ collides: true });
-
-    midLayer.setDepth(10);
     const merchant = this.physics.add.group({
       classType: Girl,
       createCallback: (go) => {
@@ -84,8 +87,8 @@ export default class Shop extends Phaser.Scene {
     shopper.setDepth(1);
     shopper.body.setSize(160, 160);
     this.farmer = this.add.farmer(240, 394, 'farmer');
-    this.shopDoor = this.physics.add.sprite(240, 400, 'floor');
-    this.shopDoor.setDepth(-1);
+    this.shopDoor = this.physics.add.sprite(240, 400, 'floor')
+      .setDepth(-1);
     this.shopDoor.body.offset.y = 32;
 
     this.physics.add.collider(shopper, waypoints);

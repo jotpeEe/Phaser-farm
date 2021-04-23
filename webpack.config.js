@@ -25,6 +25,7 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
+        exclude: /node_modules/,
         use: ['style-loader', 'css-loader'],
       },
       {
@@ -34,6 +35,7 @@ module.exports = {
       },
       {
         test: /\.(gif|png|jpe?g|svg|xml)$/i,
+        exclude: /node_modules/,
         use: 'file-loader',
       },
     ],

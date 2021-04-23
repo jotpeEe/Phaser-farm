@@ -24,6 +24,7 @@ export default class Market extends Phaser.Scene {
   ) => {
     if (tile === this.shopDoors) {
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, this.farmer.y));
+      this.registry.set('lastScene', 'market');
       this.scene.start('shop');
     } else {
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, 1100));
@@ -80,7 +81,11 @@ export default class Market extends Phaser.Scene {
     topLayer.setDepth(10);
 
     if (this.registry.values.farmerPosition !== undefined) {
-      this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, 32, 'farmer');
+      if (this.registry.values.lastScene === 'game') {
+        this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, 32, 'farmer');
+      } else {
+        this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, this.registry.values.farmerPosition.y, 'farmer');
+      }
     } else {
       this.farmer = this.add.farmer(780, 32, 'farmer');
     }
