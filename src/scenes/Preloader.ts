@@ -4,7 +4,7 @@ import tiles from '../assets/tiles/farm.png';
 import tilesHouse from '../assets/tiles/house.png';
 import floor from '../assets/tiles/floor.png';
 import door from '../assets/tiles/door.png';
-import bubble from '../assets/resources/bubble.png';
+import bubble from '../assets/resources/bubble2.png';
 import ground from '../assets/resources/ground.png';
 import plant1 from '../assets/resources/plant/grassVerySmall.png';
 import plant2 from '../assets/resources/plant/grassSmall.png';

@@ -42,7 +42,6 @@ export default class Market extends Phaser.Scene {
     }
 
     this.activeTile = body;
-    this.activeTile.setTint(0x00FFFF);
   }
 
   private updateActiveTile = () => {
@@ -63,7 +62,6 @@ export default class Market extends Phaser.Scene {
     }
     this.bubble.setVisible(false);
     this.activeTile.collideFalse();
-    this.activeTile.clearTint();
     this.activeTile = undefined;
     this.bubble.destroy();
     this.bubble = undefined;
@@ -115,7 +113,7 @@ export default class Market extends Phaser.Scene {
     townPeople.get(550, 650, 'girl3');
     townPeople.get(250, 450, 'girl3');
     townPeople.get(250, 850, 'girl');
-    townPeople.get(450, 250, 'girl2');
+    townPeople.get(450, 350, 'girl2');
 
     portals.setCollisionByProperty({ collides: true });
     midCharLayer.setCollisionByProperty({ collides: true });
