@@ -7,8 +7,9 @@ import Girl from '../character/girl';
 export default class Market extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private farmer: Phaser.Physics.Arcade.Sprite
-  private activeTile: Phaser.Physics.Arcade.Sprite
+  private activeTile: Girl
   private shopDoors: Phaser.Physics.Arcade.Sprite
+  private bubble: Phaser.Physics.Arcade.Sprite
 
   constructor() {
     super('market');
@@ -34,7 +35,7 @@ export default class Market extends Phaser.Scene {
 
   private handleOverlap = (
     player: Phaser.Physics.Arcade.Sprite,
-    body: Phaser.Physics.Arcade.Sprite,
+    body: Girl,
   ) => {
     if (this.activeTile) {
       return;
@@ -53,12 +54,19 @@ export default class Market extends Phaser.Scene {
       this.farmer.x, this.farmer.y, this.activeTile.x, this.activeTile.y,
     );
 
-    if (distance < 32) {
+    if (distance < 40) {
+      this.activeTile.collideTrue();
+      if (this.bubble === undefined) {
+        this.bubble = this.physics.add.sprite(this.activeTile.x, this.activeTile.y - 20, 'bubble');
+      }
       return;
     }
-
+    this.bubble.setVisible(false);
+    this.activeTile.collideFalse();
     this.activeTile.clearTint();
     this.activeTile = undefined;
+    this.bubble.destroy();
+    this.bubble = undefined;
   }
 
   create() {
@@ -98,6 +106,7 @@ export default class Market extends Phaser.Scene {
       createCallback: (go) => {
         const girlGo = go as Girl;
         girlGo.body.onCollide = true;
+        girlGo.body.setSize(girlGo.width * 0.5, girlGo.height);
       },
     });
 

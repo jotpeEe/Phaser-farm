@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import createAnimation from '../utils/createAnimation';
-import Girl from '../character/girl';
+import Merchant from '../character/girl';
 
 export default class Shop extends Phaser.Scene {
   cursors: Phaser.Types.Input.Keyboard.CursorKeys
@@ -76,10 +76,10 @@ export default class Shop extends Phaser.Scene {
     map.createLayer('top', tileset);
 
     const merchant = this.physics.add.group({
-      classType: Girl,
+      classType: Merchant,
       createCallback: (go) => {
-        const girlGo = go as Girl;
-        girlGo.body.onCollide = true;
+        const merchantGo = go as Merchant;
+        merchantGo.body.onCollide = true;
       },
     });
 
