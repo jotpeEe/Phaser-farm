@@ -11,9 +11,9 @@ enum Direction {
 }
 
 const randomDirection = (exclude: Direction) => {
-  let newDirection = Phaser.Math.Between(0, 4);
+  let newDirection = Phaser.Math.Between(0, 3);
   while (newDirection === exclude) {
-    newDirection = Phaser.Math.Between(0, 4);
+    newDirection = Phaser.Math.Between(0, 3);
   }
   return newDirection;
 };
@@ -31,7 +31,7 @@ export default class Girl extends Phaser.Physics.Arcade.Sprite {
     scene.time.addEvent({
       delay: 4000,
       callback: () => {
-        this.direction = Phaser.Math.Between(0, 4);
+        this.direction = Phaser.Math.Between(0, 3);
       },
       loop: true,
     });

@@ -16,6 +16,10 @@ export default class House extends Phaser.Scene {
     this.scene.start('game');
   }
 
+  private handleBed = () => {
+    this.farmer.setVisible(false);
+  }
+
   preload() {
     this.cursors = this.input.keyboard.createCursorKeys();
   }
@@ -45,7 +49,7 @@ export default class House extends Phaser.Scene {
     this.physics.add.collider(this.farmer, bottomLayer);
     this.physics.add.collider(this.farmer, midLayer);
     this.physics.add.collider(this.farmer, this.door, this.handleDoor);
-    this.physics.add.collider(this.farmer, this.bed);
+    this.physics.add.overlap(this.farmer, this.bed, this.handleBed);
 
     this.cameras.main.startFollow(this.farmer, true);
   }

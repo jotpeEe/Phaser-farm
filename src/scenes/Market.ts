@@ -60,7 +60,6 @@ export default class Market extends Phaser.Scene {
       }
       return;
     }
-    this.bubble.setVisible(false);
     this.activeTile.collideFalse();
     this.activeTile = undefined;
     this.bubble.destroy();

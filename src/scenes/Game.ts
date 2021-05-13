@@ -10,15 +10,13 @@ export default class Game extends Phaser.Scene {
   private activeFarm: Phaser.Physics.Arcade.Sprite
   private plants: Phaser.Physics.Arcade.StaticGroup
   private houseDoor: Phaser.Physics.Arcade.Sprite
-  private clicked: boolean;
   private growthRate: number;
-  farmerPosition = Phaser.Math.Vector2;
+  private money: number;
+  private seeds: number;
 
   constructor() {
     super('game');
-    this.clicked = false;
-    this.growthRate = 15;
-    // eslint-disable-next-line no-unused-expressions
+    this.growthRate = 4;
   }
 
   private handlePortals = (player: Phaser.Physics.Arcade.Sprite, portal: any) => {
@@ -28,9 +26,10 @@ export default class Game extends Phaser.Scene {
     } else {
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, 1100));
       this.registry.set('lastScene', 'game');
-      // this.registry.set('plants', this.plants.children);
       this.scene.start('market');
     }
+    this.registry.set('money', this.money);
+    this.registry.set('seeds', this.seeds);
   }
 
   private handleOverlap = (player: Phaser.Physics.Arcade.Sprite, body: any) => {
@@ -56,7 +55,6 @@ export default class Game extends Phaser.Scene {
 
     this.activeFarm.clearTint();
     this.activeFarm = undefined;
-    this.clicked = false;
   }
 
   private createBoxes(x: number, y: number, rowes: number, columns: number) {
@@ -77,39 +75,34 @@ export default class Game extends Phaser.Scene {
   private plantsLoop = (plants: Phaser.Physics.Arcade.StaticGroup) => {
     const array: number[] = [];
     let index = 0;
-    plants.children.each((e: Phaser.Physics.Arcade.Sprite) => {
-      if (e.data !== null) {
-        array[index] = e.data.values.created;
+    plants.children.each((plant: Phaser.Physics.Arcade.Sprite) => {
+      if (plant.data !== null) {
+        array[index] = plant.data.values.created;
         index += 1;
-        const w = (Date.now() - e.data.get('created')) / 1000;
-        if (w < this.growthRate) {
-          e.setTexture('plantVerySmall');
+        const dt = (Date.now() - plant.data.get('created')) / 1000;
+        if (dt < this.growthRate) {
+          plant.setTexture('plantVerySmall');
         }
-        if (w > this.growthRate && w < this.growthRate * 2) {
-          e.setTexture('plantSmall');
+        if (dt > this.growthRate && dt < this.growthRate * 2) {
+          plant.setTexture('plantSmall');
         }
-        if (w > this.growthRate * 2 && w < this.growthRate * 3) {
-          e.setTexture('plantMedium');
+        if (dt > this.growthRate * 2 && dt < this.growthRate * 3) {
+          plant.setTexture('plantMedium');
         }
-        if (w > this.growthRate * 3 && w < this.growthRate * 4) {
-          e.setTexture('plantLarge');
+        if (dt > this.growthRate * 3 && dt < this.growthRate * 4) {
+          plant.setTexture('plantLarge');
         }
-        if (w > this.growthRate * 4 && w < this.growthRate * 5) {
-          e.setTexture('plantVeryLarge');
+        if (dt > this.growthRate * 4 && dt < this.growthRate * 5) {
+          plant.setTexture('plantVeryLarge');
         }
-        if (w > this.growthRate * 5 && w < this.growthRate * 6) {
-          e.setTexture('plantExpire1');
+        if (dt > this.growthRate * 5 && dt < this.growthRate * 6) {
+          plant.setTexture('plantExpire1');
         }
-        if (w > this.growthRate * 6 && w < this.growthRate * 7) {
-          e.setTexture('plantExpire2');
+        if (dt > this.growthRate * 6 && dt < this.growthRate * 7) {
+          plant.setTexture('plantExpire2');
         }
-        if (w > this.growthRate * 7 && w < this.growthRate * 8) {
-          e.setTexture('plantExpire3');
-        }
-        if (w > this.growthRate * 8) {
-          e.setTexture('ground');
-          e.data.destroy();
-          e.data = null;
+        if (dt > this.growthRate * 7) {
+          plant.setTexture('plantExpire3');
         }
       } else {
         array[index] = null;
@@ -121,13 +114,55 @@ export default class Game extends Phaser.Scene {
 
   private loadPlantsFromRegistry = (array: number[], plants: Phaser.Physics.Arcade.StaticGroup) => {
     let index = 0;
-    plants.children.each((e: Phaser.Physics.Arcade.Sprite) => {
+    plants.children.each((plant: Phaser.Physics.Arcade.Sprite) => {
       if (array[index] !== null) {
-        e.data = new Phaser.Data.DataManager(e);
-        e.data.set('created', array[index]);
+        plant.data = new Phaser.Data.DataManager(plant);
+        plant.data.set('created', array[index]);
       }
       index += 1;
     });
+  }
+
+  private seedsAvailability = () => {
+    if (this.seeds > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  private gatherPositive = () => {
+    this.activeFarm.data = null;
+    this.activeFarm.setTexture('ground');
+    this.money += 6;
+    console.log('collected');
+  }
+
+  private clearPot = () => {
+    this.activeFarm.data = null;
+    this.activeFarm.setTexture('ground');
+    this.money -= 15;
+    console.log('des');
+  }
+
+  private plantActionManager = () => {
+    if (this.activeFarm !== undefined) {
+      if (this.cursors.space.isDown) {
+        if (this.activeFarm.data === null && this.seedsAvailability()) {
+          this.activeFarm.data = new Phaser.Data.DataManager(this.activeFarm);
+          this.activeFarm.data.set('created', Date.now());
+          this.activeFarm.setTexture('plantVerySmall');
+          this.seeds -= 1;
+        } else {
+          const texture = {
+            plantVeryLarge: () => this.gatherPositive(),
+            plantExpire1: () => this.gatherPositive(),
+            plantExpire2: () => this.clearPot(),
+            plantExpire3: () => this.clearPot(),
+          }[this.activeFarm.texture.key];
+          texture?.();
+        }
+      }
+    }
   }
 
   preload() {
@@ -140,23 +175,41 @@ export default class Game extends Phaser.Scene {
     const map = this.make.tilemap({ key: 'farm' });
     const tileset = map.addTilesetImage('farm', 'tiles');
 
-    const portals = map.createLayer('portals', tileset);
-    const bottomLayer = map.createLayer('bottom', tileset);
+    const portals = map.createLayer('portals', tileset)
+      .setCollisionByProperty({ collides: true });
+    const bottomLayer = map.createLayer('bottom', tileset)
+      .setCollisionByProperty({ collides: true });
     const midLayer = map.createLayer('mid', tileset);
     const topLayer = map.createLayer('top', tileset);
-    const midCharLayer = map.createLayer('mid-for-char', tileset);
+    const midCharLayer = map.createLayer('mid-for-char', tileset)
+      .setCollisionByProperty({ collides: true });
 
     midLayer.setDepth(10);
     topLayer.setDepth(10);
 
     this.plants = this.physics.add.staticGroup();
-
     this.houseDoor = this.physics.add.sprite(624, 96, 'door');
 
     this.createBoxes(976, 464, 17, 7);
     this.createBoxes(48, 144, 3, 11);
     this.createBoxes(400, 208, 1, 1);
     this.createBoxes(368, 464, 8, 12);
+
+    if (this.registry.values.money === undefined) {
+      this.money = 0;
+    } else {
+      this.money = this.registry.get('money');
+    }
+
+    console.log(this.money);
+
+    if (this.registry.values.seeds === undefined) {
+      this.seeds = 10;
+    } else {
+      this.seeds = this.registry.get('seeds');
+    }
+
+    console.log(this.seeds);
 
     if (this.registry.values.plants !== undefined) {
       const array = this.registry.get('plants');
@@ -168,10 +221,6 @@ export default class Game extends Phaser.Scene {
     } else {
       this.farmer = this.add.farmer(780, 1100, 'farmer');
     }
-
-    portals.setCollisionByProperty({ collides: true });
-    midCharLayer.setCollisionByProperty({ collides: true });
-    bottomLayer.setCollisionByProperty({ collides: true });
 
     this.physics.add.overlap(this.farmer, this.plants, this.handleOverlap);
     this.physics.add.collider(this.farmer, portals, this.handlePortals, undefined, this);
@@ -186,15 +235,7 @@ export default class Game extends Phaser.Scene {
     if (this.farmer) {
       this.farmer.update(this.cursors);
     }
-    if (this.activeFarm !== undefined) {
-      if (this.cursors.space.isDown && this.clicked === false) {
-        this.activeFarm.data = new Phaser.Data.DataManager(this.activeFarm);
-        this.activeFarm.data.set('created', Date.now());
-        this.activeFarm.setTexture('plantVerySmall');
-        this.clicked = true;
-      }
-    }
-
+    this.plantActionManager();
     this.plantsLoop(this.plants);
     this.updateActiveTile();
   }
