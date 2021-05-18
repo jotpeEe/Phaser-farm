@@ -153,13 +153,13 @@ export default class Game extends Phaser.Scene {
           this.activeFarm.setTexture('plantVerySmall');
           this.seeds -= 1;
         } else {
-          const texture = {
+          const actions = {
             plantVeryLarge: () => this.gatherPositive(),
             plantExpire1: () => this.gatherPositive(),
             plantExpire2: () => this.clearPot(),
             plantExpire3: () => this.clearPot(),
           }[this.activeFarm.texture.key];
-          texture?.();
+          actions?.();
         }
       }
     }
