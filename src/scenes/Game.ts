@@ -134,14 +134,12 @@ export default class Game extends Phaser.Scene {
     this.activeFarm.data = null;
     this.activeFarm.setTexture('ground');
     this.money += 6;
-    console.log('collected');
   }
 
   private clearPot = () => {
     this.activeFarm.data = null;
     this.activeFarm.setTexture('ground');
     this.money -= 15;
-    console.log('des');
   }
 
   private plantActionManager = () => {
@@ -201,15 +199,11 @@ export default class Game extends Phaser.Scene {
       this.money = this.registry.get('money');
     }
 
-    console.log(this.money);
-
     if (this.registry.values.seeds === undefined) {
       this.seeds = 10;
     } else {
       this.seeds = this.registry.get('seeds');
     }
-
-    console.log(this.seeds);
 
     if (this.registry.values.plants !== undefined) {
       const array = this.registry.get('plants');

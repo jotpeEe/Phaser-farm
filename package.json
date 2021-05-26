@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "npm run lint && webpack serve --open",
-    "lint": "eslint --ext ts,tsx ."
+    "lint": "eslint --ext ts,tsx .",
+    "upload": "npm run build && s3cmd --no-mime-magic --acl-public --delete-removed --delete-after sync dist/ s3://mklos/farm/"
   },
   "author": "",
   "license": "ISC",
