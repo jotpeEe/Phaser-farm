@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 
+// Loads animations which depends on character texture.
 export default function createAnimation(
   anims: Phaser.Animations.AnimationManager,
   texture: string,

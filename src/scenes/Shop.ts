@@ -28,6 +28,36 @@ export default class Shop extends Phaser.Scene {
     super('shop');
   }
 
+  // Called before the Scenes create method, allowing you to preload assets that the Scene may need.
+  preload = () => {
+    this.cursors = this.input.keyboard.createCursorKeys();
+  }
+
+  // Called at the start of the scene, only once.
+  create = () => {
+    createAnimation(this.anims, 'farmer', 15);
+    createAnimation(this.anims, 'girl', 5);
+
+    this.createMap();
+    this.addNPCs();
+    this.addColliders();
+
+    this.money = this.registry.get('money');
+    this.seeds = this.registry.get('seeds');
+
+    this.physics.add.overlap(this.NPCs.farmer, this.NPCs.shopper, this.handleTouch);
+
+    this.cameras.main.startFollow(this.NPCs.farmer, true);
+  }
+
+  // Main loop of the scene.
+  update = () => {
+    if (this.NPCs.farmer) {
+      this.NPCs.farmer.update(this.cursors);
+    }
+    this.updateActiveTile();
+  }
+
   private handleDoor = () => {
     this.registry.set('lastScene', 'shop');
     this.registry.set('seeds', this.seeds);
@@ -53,7 +83,7 @@ export default class Shop extends Phaser.Scene {
     }
 
     this.activeTouch = shopper;
-    this.createDialogBox('Hello, would you like to buy some seeds?', true);
+    this.createDialogBox(true);
     this.activeTouch.collideTrue();
   }
 
@@ -74,11 +104,11 @@ export default class Shop extends Phaser.Scene {
     this.activeTouch = undefined;
   }
 
-  private createDialogBox = (msg: string, confirm: boolean) => {
+  private createDialogBox = (confirm: boolean) => {
     const bg = this.add.rectangle(0, 0, this.scale.width, 150, 0x914f1d)
       .setOrigin(0);
     const textWidth = bg.width * 0.7;
-    this.text = this.add.text(10, 10, msg);
+    this.text = this.add.text(10, 10, 'Hello, would you like to buy some seeds?');
     this.dialogBox = this.add.container(0, this.scale.height * 0.8)
       .setScrollFactor(0, 0)
       .add(bg)
@@ -200,32 +230,5 @@ export default class Shop extends Phaser.Scene {
     this.physics.add.collider(this.NPCs.farmer, this.mapLayers.midCharLayer);
     this.physics.add.collider(this.NPCs.farmer, this.mapLayers.midLayer);
     this.physics.add.collider(this.NPCs.farmer, this.NPCs.shopDoor, this.handleDoor);
-  }
-
-  preload() {
-    this.cursors = this.input.keyboard.createCursorKeys();
-  }
-
-  create() {
-    createAnimation(this.anims, 'farmer', 15);
-    createAnimation(this.anims, 'girl', 5);
-
-    this.createMap();
-    this.addNPCs();
-    this.addColliders();
-
-    this.money = this.registry.get('money');
-    this.seeds = this.registry.get('seeds');
-
-    this.physics.add.overlap(this.NPCs.farmer, this.NPCs.shopper, this.handleTouch);
-
-    this.cameras.main.startFollow(this.NPCs.farmer, true);
-  }
-
-  update() {
-    if (this.NPCs.farmer) {
-      this.NPCs.farmer.update(this.cursors);
-    }
-    this.updateActiveTile();
   }
 }

@@ -4,12 +4,18 @@ import createAnimation from '../utils/createAnimation';
 
 import '../character/farmer';
 
+interface ILayers {
+  portals: Phaser.Tilemaps.TilemapLayer,
+  bottomLayer: Phaser.Tilemaps.TilemapLayer,
+  midCharLayer: Phaser.Tilemaps.TilemapLayer,
+}
 export default class Game extends Phaser.Scene {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private farmer: Phaser.Physics.Arcade.Sprite
   private activeFarm: Phaser.Physics.Arcade.Sprite
   private plants: Phaser.Physics.Arcade.StaticGroup
   private houseDoor: Phaser.Physics.Arcade.Sprite
+  private mapLayers: ILayers
   private growthRate: number;
   private money: number;
   private seeds: number;
@@ -19,7 +25,40 @@ export default class Game extends Phaser.Scene {
     this.growthRate = 4;
   }
 
-  private handlePortals = (player: Phaser.Physics.Arcade.Sprite, portal: any) => {
+  // Called before the Scenes create method, allowing you to preload assets that the Scene may need.
+  preload = () => {
+    this.cursors = this.input.keyboard.createCursorKeys();
+  }
+
+  // Called at the start of the scene, only once.
+  create = () => {
+    createAnimation(this.anims, 'farmer', 15);
+
+    this.createMap();
+    this.createPlants();
+    this.houseDoor = this.physics.add.sprite(624, 96, 'door');
+    this.createMainCharacter();
+
+    this.addColliders();
+    this.initiateDataValues();
+
+    this.cameras.main.startFollow(this.farmer, true);
+  }
+
+  // Main loop of the scene.
+  update = () => {
+    if (this.farmer) {
+      this.farmer.update(this.cursors);
+    }
+    this.plantActionManager();
+    this.plantsLoop(this.plants);
+    this.updateActiveTile();
+  }
+
+  private handlePortals = (
+    player: Phaser.Physics.Arcade.Sprite,
+    portal: Phaser.Physics.Arcade.Sprite,
+  ) => {
     if (portal === this.houseDoor) {
       this.registry.set('farmerPosition', new Phaser.Math.Vector2(this.farmer.x, this.farmer.y));
       this.scene.start('house');
@@ -32,7 +71,10 @@ export default class Game extends Phaser.Scene {
     this.registry.set('seeds', this.seeds);
   }
 
-  private handleOverlap = (player: Phaser.Physics.Arcade.Sprite, body: any) => {
+  private handleOverlap = (
+    player: Phaser.Physics.Arcade.Sprite,
+    body: Phaser.Physics.Arcade.Sprite,
+  ) => {
     if (this.activeFarm) {
       return;
     }
@@ -70,6 +112,14 @@ export default class Game extends Phaser.Scene {
       }
       y += 32;
     }
+  }
+
+  private createPlants = () => {
+    this.plants = this.physics.add.staticGroup();
+    this.createBoxes(976, 464, 17, 7);
+    this.createBoxes(48, 144, 3, 11);
+    this.createBoxes(400, 208, 1, 1);
+    this.createBoxes(368, 464, 8, 12);
   }
 
   private plantsLoop = (plants: Phaser.Physics.Arcade.StaticGroup) => {
@@ -163,36 +213,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  preload() {
-    this.cursors = this.input.keyboard.createCursorKeys();
-  }
-
-  create() {
-    createAnimation(this.anims, 'farmer', 15);
-
-    const map = this.make.tilemap({ key: 'farm' });
-    const tileset = map.addTilesetImage('farm', 'tiles');
-
-    const portals = map.createLayer('portals', tileset)
-      .setCollisionByProperty({ collides: true });
-    const bottomLayer = map.createLayer('bottom', tileset)
-      .setCollisionByProperty({ collides: true });
-    const midLayer = map.createLayer('mid', tileset);
-    const topLayer = map.createLayer('top', tileset);
-    const midCharLayer = map.createLayer('mid-for-char', tileset)
-      .setCollisionByProperty({ collides: true });
-
-    midLayer.setDepth(10);
-    topLayer.setDepth(10);
-
-    this.plants = this.physics.add.staticGroup();
-    this.houseDoor = this.physics.add.sprite(624, 96, 'door');
-
-    this.createBoxes(976, 464, 17, 7);
-    this.createBoxes(48, 144, 3, 11);
-    this.createBoxes(400, 208, 1, 1);
-    this.createBoxes(368, 464, 8, 12);
-
+  private initiateDataValues = () => {
     if (this.registry.values.money === undefined) {
       this.money = 0;
     } else {
@@ -209,28 +230,43 @@ export default class Game extends Phaser.Scene {
       const array = this.registry.get('plants');
       this.loadPlantsFromRegistry(array, this.plants);
     }
+  }
 
+  private createMap = () => {
+    const map = this.make.tilemap({ key: 'farm' });
+    const tileset = map.addTilesetImage('farm', 'tiles');
+
+    const portals = map.createLayer('portals', tileset)
+      .setCollisionByProperty({ collides: true });
+    const bottomLayer = map.createLayer('bottom', tileset)
+      .setCollisionByProperty({ collides: true });
+    const midCharLayer = map.createLayer('mid-for-char', tileset)
+      .setCollisionByProperty({ collides: true });
+    map.createLayer('mid', tileset)
+      .setDepth(10);
+    map.createLayer('top', tileset)
+      .setDepth(10);
+
+    this.mapLayers = {
+      portals,
+      bottomLayer,
+      midCharLayer,
+    };
+  }
+
+  private createMainCharacter = () => {
     if (this.registry.values.farmerPosition !== undefined) {
       this.farmer = this.add.farmer(this.registry.values.farmerPosition.x, this.registry.values.farmerPosition.y, 'farmer');
     } else {
       this.farmer = this.add.farmer(780, 1100, 'farmer');
     }
-
-    this.physics.add.overlap(this.farmer, this.plants, this.handleOverlap);
-    this.physics.add.collider(this.farmer, portals, this.handlePortals, undefined, this);
-    this.physics.add.collider(this.farmer, bottomLayer);
-    this.physics.add.collider(this.farmer, midCharLayer);
-    this.physics.add.overlap(this.farmer, this.houseDoor, this.handlePortals);
-
-    this.cameras.main.startFollow(this.farmer, true);
   }
 
-  update() {
-    if (this.farmer) {
-      this.farmer.update(this.cursors);
-    }
-    this.plantActionManager();
-    this.plantsLoop(this.plants);
-    this.updateActiveTile();
+  private addColliders = () => {
+    this.physics.add.overlap(this.farmer, this.plants, this.handleOverlap);
+    this.physics.add.collider(this.farmer, this.mapLayers.portals, this.handlePortals);
+    this.physics.add.collider(this.farmer, this.mapLayers.bottomLayer);
+    this.physics.add.collider(this.farmer, this.mapLayers.midCharLayer);
+    this.physics.add.overlap(this.farmer, this.houseDoor, this.handlePortals);
   }
 }

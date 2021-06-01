@@ -2,27 +2,27 @@ import Phaser from 'phaser';
 
 import tiles from '../assets/tiles/farm.png';
 import tilesHouse from '../assets/tiles/house.png';
-import floor from '../assets/tiles/floor.png';
-import door from '../assets/tiles/door.png';
-import bubble from '../assets/resources/bubble2.png';
-import ground from '../assets/resources/ground.png';
-import plant1 from '../assets/resources/plant/grassVerySmall.png';
-import plant2 from '../assets/resources/plant/grassSmall.png';
-import plant3 from '../assets/resources/plant/grassMedium.png';
-import plant4 from '../assets/resources/plant/grassLarge.png';
-import plant5 from '../assets/resources/plant/grassVeryLarge.png';
-import plant6 from '../assets/resources/plant/grassExpire1.png';
-import plant7 from '../assets/resources/plant/grassExpire2.png';
-import plant8 from '../assets/resources/plant/grassExpire3.png';
-import farmer from '../assets/character/farmer.png';
-import girl from '../assets/character/girl.png';
-import girl2 from '../assets/character/girl2.png';
-import girl3 from '../assets/character/girl3.png';
+import floor from '../assets/floor.png';
+import door from '../assets/door.png';
+import bubble from '../assets/bubble.png';
+import ground from '../assets/ground.png';
+import plant1 from '../assets/plant/grassVerySmall.png';
+import plant2 from '../assets/plant/grassSmall.png';
+import plant3 from '../assets/plant/grassMedium.png';
+import plant4 from '../assets/plant/grassLarge.png';
+import plant5 from '../assets/plant/grassVeryLarge.png';
+import plant6 from '../assets/plant/grassExpire1.png';
+import plant7 from '../assets/plant/grassExpire2.png';
+import plant8 from '../assets/plant/grassExpire3.png';
+import farmer from '../assets/characters/farmer.png';
+import girl from '../assets/characters/girl.png';
+import girl2 from '../assets/characters/girl2.png';
+import girl3 from '../assets/characters/girl3.png';
 
-import farmerDate from '../assets/character/farmer.json';
-import girlData from '../assets/character/girl.json';
-import girl2Data from '../assets/character/girl2.json';
-import girl3Data from '../assets/character/girl3.json';
+import farmerDate from '../assets/characters/farmer.json';
+import girlData from '../assets/characters/girl.json';
+import girl2Data from '../assets/characters/girl2.json';
+import girl3Data from '../assets/characters/girl3.json';
 import farmData from '../assets/tiles/farm.json';
 import marketData from '../assets/tiles/market.json';
 import houseData from '../assets/tiles/house.json';
@@ -33,7 +33,7 @@ export default class Preloader extends Phaser.Scene {
     super('preloader');
   }
 
-  preload() {
+  preload = () => {
     this.load.image('tiles', tiles);
     this.load.image('tilesHouse', tilesHouse);
     this.load.image('floor', floor);
@@ -60,7 +60,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.atlas('girl3', girl3, girl3Data);
   }
 
-  create() {
+  create = () => {
     this.scene.start('game');
   }
 }

@@ -38,6 +38,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'file-loader',
         options: {
+          context: path.resolve(__dirname, 'src'),
           name: '[path]/[contenthash].[ext]',
         },
       },
